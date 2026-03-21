@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#e8f55a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>FitPlan Pro</title>
+<link rel="manifest" href="manifest.json"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--lime:#e8f55a;--lime2:#c8d940;--bg:#0e0e10;--card:#18181c;--card2:#222228;--border:rgba(255,255,255,0.07);--text:#f2f2f0;--muted:#7a7a85;--orange:#ff7c3a;--blue:#5ab4ff;--red:#ff5555;--r:16px;--bot:env(safe-area-inset-bottom,0px);}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
+.hdr{position:sticky;top:0;z-index:100;background:rgba(14,14,16,.95);backdrop-filter:blur(16px);padding:12px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.hdr h1{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.05em;line-height:1;}
+.hdr h1 span{color:var(--lime);}
+.hdr p{font-size:10px;color:var(--muted);margin-top:1px;}
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:62px;z-index:99;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:none;padding:11px 16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.tab.active{color:var(--lime);border-bottom-color:var(--lime);}
+.sec{display:none;padding:14px 14px 110px;}
+.sec.active{display:block;}
+.card{background:var(--card);border-radius:var(--r);padding:15px;margin-bottom:11px;border:1px solid var(--border);}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:11px;display:flex;align-items:center;gap:6px;}
+.hero{background:linear-gradient(135deg,#1a1f0d,#0e1520);border:1px solid rgba(232,245,90,.18);border-radius:var(--r);padding:18px;margin-bottom:11px;text-align:center;}
+.hero .big{font-family:'Bebas Neue',sans-serif;font-size:70px;color:var(--lime);line-height:1;}
+.hero .unit{font-size:18px;color:var(--muted);}
+.hero .lbl{font-size:11px;color:var(--muted);margin-top:3px;}
+.stats3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:11px;}
+.sbox{background:var(--card2);border-radius:12px;padding:12px 8px;text-align:center;border:1px solid var(--border);}
+.sbox .v{font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1;}
+.sbox .l{font-size:10px;color:var(--muted);margin-top:2px;}
+.pbar-wrap{margin:8px 0 4px;}
+.pbar-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px;}
+.pbar{height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--lime2),var(--lime));border-radius:99px;transition:width .7s ease;}
+.toggle-wrap{display:flex;background:var(--card2);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;border:1px solid var(--border);}
+.toggle-btn{flex:1;padding:9px 0;text-align:center;font-size:13px;font-weight:600;border-radius:9px;cursor:pointer;transition:all .2s;color:var(--muted);}
+.toggle-btn.active{background:var(--lime);color:#000;}
+.meal-block{background:var(--card2);border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid var(--border);}
+.meal-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.meal-emoji{font-size:32px;flex-shrink:0;}
+.meal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;}
+.meal-time{font-size:11px;color:var(--muted);}
+.meal-badge{margin-left:auto;text-align:right;}
+.meal-kcal{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--lime);line-height:1;}
+.meal-prot{font-size:10px;color:var(--muted);}
+.food-rows{display:flex;flex-direction:column;gap:5px;}
+.food-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:rgba(0,0,0,.25);border-radius:9px;}
+.food-name{font-size:13px;}
+.food-g{font-size:13px;font-weight:700;color:var(--lime);}
+.macro-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.mchip{font-size:11px;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.06);font-weight:500;}
+.totals-box{background:linear-gradient(135deg,rgba(232,245,90,.1),rgba(200,217,64,.05));border:1px solid rgba(232,245,90,.2);border-radius:14px;padding:14px;margin-bottom:11px;}
+.totals-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;}
+.total-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 10px;background:rgba(0,0,0,.25);border-radius:8px;}
+.total-item .food{color:var(--muted);}
+.total-item .grams{font-weight:700;color:var(--text);}
+.glink{display:flex;align-items:center;gap:12px;background:var(--card2);border-radius:14px;padding:14px 16px;margin-bottom:9px;text-decoration:none;color:var(--text);border:1px solid var(--border);transition:transform .15s;}
+.glink:active{transform:scale(.97);}
+.glink .ico{font-size:28px;flex-shrink:0;}
+.glink .info{flex:1;}
+.glink .name{font-size:14px;font-weight:600;}
+.glink .desc{font-size:11px;color:var(--muted);margin-top:1px;}
+.glink .arr{font-size:20px;color:var(--muted);}
+.glink.lime{border-color:rgba(232,245,90,.2);}
+.glink.blue{border-color:rgba(90,180,255,.2);}
+.glink.orange{border-color:rgba(255,124,58,.2);}
+.g2grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.g2btn{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card2);border-radius:14px;padding:14px 10px;text-decoration:none;color:var(--text);border:1px solid var(--border);text-align:center;transition:transform .15s;}
+.g2btn:active{transform:scale(.95);}
+.g2btn .ico{font-size:30px;}
+.g2btn .name{font-size:12px;font-weight:600;}
+.g2btn .desc{font-size:10px;color:var(--muted);}
+.ex-item{background:var(--card2);border-radius:14px;padding:13px;margin-bottom:9px;display:flex;align-items:center;gap:11px;border:1px solid var(--border);}
+.ex-ico{font-size:30px;flex-shrink:0;}
+.ex-info{flex:1;}
+.ex-name{font-size:14px;font-weight:600;}
+.ex-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.ex-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.tag{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:600;}
+.tag.lime{background:rgba(232,245,90,.15);color:var(--lime);}
+.tag.blue{background:rgba(90,180,255,.15);color:var(--blue);}
+.tag.orange{background:rgba(255,124,58,.15);color:var(--orange);}
+.tag.red{background:rgba(255,85,85,.15);color:var(--red);}
+.ex-btn{flex-shrink:0;background:rgba(232,245,90,.12);border:1px solid rgba(232,245,90,.3);color:var(--lime);border-radius:10px;padding:8px 11px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:3px;white-space:nowrap;}
+.day-card{background:var(--card2);border-radius:14px;padding:13px;margin-bottom:9px;border:1px solid var(--border);}
+.day-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.day-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.04em;}
+.day-badge{font-size:10px;padding:3px 10px;border-radius:99px;font-weight:700;}
+.db-work{background:rgba(122,122,133,.15);color:var(--muted);}
+.db-gym{background:rgba(232,245,90,.15);color:var(--lime);}
+.db-cardio{background:rgba(255,124,58,.15);color:var(--orange);}
+.sched-items{display:flex;flex-direction:column;gap:6px;}
+.sched-item{display:flex;align-items:center;gap:9px;font-size:13px;}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.track-input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;}
+input[type=number]{flex:1;background:var(--card2);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;color:var(--text);font-size:16px;font-family:'Outfit',sans-serif;outline:none;}
+input[type=number]:focus{border-color:rgba(232,245,90,.4);}
+.log-btn{background:var(--lime);color:#000;border:none;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;}
+.wlog-item{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.3);border-radius:9px;padding:9px 12px;margin-bottom:6px;border:1px solid var(--border);}
+.wlog-date{font-size:11px;color:var(--muted);}
+.wlog-kg{font-family:'Bebas Neue',sans-serif;font-size:20px;}
+.water-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:8px 0;}
+.wcup{aspect-ratio:1;background:rgba(90,180,255,.08);border:1.5px solid rgba(90,180,255,.2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s;}
+.wcup.on{background:rgba(90,180,255,.3);border-color:var(--blue);}
+.supp-item{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.3);border-radius:10px;padding:10px 12px;margin-bottom:7px;cursor:pointer;border:1px solid var(--border);transition:border-color .2s;}
+.tip{background:rgba(255,124,58,.08);border:1px solid rgba(255,124,58,.2);border-radius:12px;padding:11px;font-size:12px;color:#f0c8a0;line-height:1.5;display:flex;gap:7px;margin-bottom:10px;}
+.sec-h{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;margin-bottom:3px;}
+.sec-sub{font-size:11px;color:var(--muted);margin-bottom:13px;line-height:1.5;}
+.divider{height:1px;background:var(--border);margin:13px 0;}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(18,18,20,.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding-bottom:var(--bot);}
+.nbtn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;background:none;border:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:10px;transition:color .2s;}
+.nbtn .ni{font-size:22px;}
+.nbtn.active{color:var(--lime);}
+.install-tip{background:rgba(232,245,90,.07);border:1px solid rgba(232,245,90,.18);border-radius:13px;padding:13px;margin-bottom:12px;font-size:12px;line-height:1.5;color:var(--muted);display:flex;gap:9px;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <h1>FIT<span>PLAN</span> PRO</h1>
+    <p>110 kg → 80–85 kg · 6–8 months</p>
+  </div>
+  <span style="font-size:30px">💪</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="go('home')">🏠 Home</div>
+  <div class="tab" onclick="go('meals')">🍽️ Meals</div>
+  <div class="tab" onclick="go('exercises')">🏋️ Exercises</div>
+  <div class="tab" onclick="go('links')">🔗 Links</div>
+  <div class="tab" onclick="go('schedule')">📅 Schedule</div>
+  <div class="tab" onclick="go('track')">📊 Track</div>
+</div>
+
+<!-- HOME -->
+<div id="tab-home" class="sec active">
+  <div class="install-tip"><span>📲</span><span>Install as app on Android: Chrome menu → <strong>"Add to Home Screen"</strong> for offline access.</span></div>
+  <div class="hero">
+    <div class="big" id="disp-wt">110</div>
+    <div class="unit">kg · current weight</div>
+    <div class="lbl">Goal: 80–85 kg &nbsp;·&nbsp; ~25 kg to lose</div>
+    <br/>
+    <div class="pbar-wrap">
+      <div class="pbar-row"><span>Start 110 kg</span><span id="pct-lbl">0 kg lost</span><span>Goal 85 kg</span></div>
+      <div class="pbar"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="stats3">
+    <div class="sbox"><div class="v" style="color:var(--red)">39%</div><div class="l">Body Fat</div></div>
+    <div class="sbox"><div class="v" style="color:var(--lime)">1850</div><div class="l">kcal/day</div></div>
+    <div class="sbox"><div class="v" style="color:var(--blue)">200g</div><div class="l">Protein</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📅 8-Month Timeline</div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;gap:9px;align-items:center"><div style="width:72px;font-size:11px;color:var(--muted)">Mar 2026</div><div style="flex:1;background:var(--card2);border-radius:8px;padding:7px 10px;font-size:12px;border-left:3px solid var(--red)">Start · 110 kg · 39% fat</div></div>
+      <div style="display:flex;gap:9px;align-items:center"><div style="width:72px;font-size:11px;color:var(--muted)">May 2026</div><div style="flex:1;background:var(--card2);border-radius:8px;padding:7px 10px;font-size:12px;border-left:3px solid var(--orange)">~102 kg · −8 kg</div></div>
+      <div style="display:flex;gap:9px;align-items:center"><div style="width:72px;font-size:11px;color:var(--muted)">Jul 2026</div><div style="flex:1;background:var(--card2);border-radius:8px;padding:7px 10px;font-size:12px;border-left:3px solid var(--blue)">~95 kg · Mid-review</div></div>
+      <div style="display:flex;gap:9px;align-items:center"><div style="width:72px;font-size:11px;color:var(--muted)">Oct 2026</div><div style="flex:1;background:var(--card2);border-radius:8px;padding:7px 10px;font-size:12px;border-left:3px solid var(--lime)">🎯 ~85 kg · ~20% fat</div></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px">
+    <span style="font-size:11px;padding:4px 11px;border-radius:99px;background:rgba(232,245,90,.12);color:var(--lime);font-weight:600">⚡ ~500 kcal deficit/day</span>
+    <span style="font-size:11px;padding:4px 11px;border-radius:99px;background:rgba(90,180,255,.12);color:var(--blue);font-weight:600">💧 3–4 L water/day</span>
+    <span style="font-size:11px;padding:4px 11px;border-radius:99px;background:rgba(255,124,58,.12);color:var(--orange);font-weight:600">😴 7–8 hrs sleep</span>
+    <span style="font-size:11px;padding:4px 11px;border-radius:99px;background:rgba(255,85,85,.12);color:var(--red);font-weight:600">🏋️ Gym: Sat &amp; Sun</span>
+  </div>
+  <div class="tip"><span>💡</span><span>Weigh yourself every <strong>Monday morning</strong> before eating — same scale every time. Log it in the Track tab.</span></div>
+</div>
+
+<!-- MEALS -->
+<div id="tab-meals" class="sec">
+  <div class="sec-h">Meal Plan</div>
+  <div class="sec-sub">3 meals per day · exact grams listed · tap toggle to switch days</div>
+  <div class="toggle-wrap">
+    <div class="toggle-btn active" onclick="setMealDay('work')" id="mtw">💼 Work Days (Mon–Fri)</div>
+    <div class="toggle-btn" onclick="setMealDay('wknd')" id="mtwk">🏋️ Weekend (Sat–Sun)</div>
+  </div>
+
+  <!-- WORKDAYS -->
+  <div id="meals-work">
+    <div class="meal-block">
+      <div class="meal-header">
+        <div class="meal-emoji">🍳</div>
+        <div><div class="meal-title">BREAKFAST</div><div class="meal-time">⏰ 8:00 AM</div></div>
+        <div class="meal-badge"><div class="meal-kcal">~620</div><div class="meal-prot">~50g protein</div></div>
+      </div>
+      <div class="food-rows">
+        <div class="food-row"><span class="food-name">🧀 Cottage cheese</span><span class="food-g">150 g</span></div>
+        <div class="food-row"><span class="food-name">🥚 Boiled eggs</span><span class="food-g">3 eggs</span></div>
+        <div class="food-row"><span class="food-name">🫓 Baladi bread</span><span class="food-g">40 g</span></div>
+        <div class="food-row"><span class="food-name">🥒 Tomato &amp; cucumber</span><span class="food-g">100 g</span></div>
+      </div>
+      <div class="macro-row"><span class="mchip">P: ~50g</span><span class="mchip">~620 kcal</span><span style="font-size:11px;color:var(--muted);padding:3px 5px">Protein-heavy · preserves lean mass</span></div>
+    </div>
+
+    <div class="meal-block">
+      <div class="meal-header">
+        <div class="meal-emoji">🍗</div>
+        <div><div class="meal-title">LUNCH</div><div class="meal-time">⏰ 1:00 PM · pre-shift</div></div>
+        <div class="meal-badge"><div class="meal-kcal">~750</div><div class="meal-prot">~70g protein</div></div>
+      </div>
+      <div class="food-rows">
+        <div class="food-row"><span class="food-name">🍗 Chicken breast (grilled)</span><span class="food-g">200 g</span></div>
+        <div class="food-row"><span class="food-name">🍚 Basmati rice (cooked)</span><span class="food-g">200 g</span></div>
+        <div class="food-row"><span class="food-name">🥦 Mixed vegetables</span><span class="food-g">150 g</span></div>
+        <div class="food-row"><span class="food-name">🧀 Cottage cheese</span><span class="food-g">50 g</span></div>
+      </div>
+      <div class="macro-row"><span class="mchip">P: ~70g</span><span class="mchip">~750 kcal</span></div>
+    </div>
+
+    <div class="meal-block">
+      <div class="meal-header">
+        <div class="meal-emoji">🌙</div>
+        <div><div class="meal-title">DINNER</div><div class="meal-time">⏰ 9:00 PM · during shift</div></div>
+        <div class="meal-badge"><div class="meal-kcal">~480</div><div class="meal-prot">~80g protein</div></div>
+      </div>
+      <div class="food-rows">
+        <div class="food-row"><span class="food-name">🍗 Chicken breast</span><span class="food-g">150 g</span></div>
+        <div class="food-row"><span class="food-name">🍚 Basmati rice (cooked)</span><span class="food-g">100 g</span></div>
+        <div class="food-row"><span class="food-name">🫓 Baladi bread</span><span class="food-g">30 g</span></div>
+        <div class="food-row"><span class="food-name">🥦 Steamed vegetables</span><span class="food-g">100 g</span></div>
+        <div class="food-row"><span class="food-name">🥛 Casein protein powder</span><span class="food-g">30 g</span></div>
+      </div>
+      <div class="macro-row"><span class="mchip">P: ~80g</span><span class="mchip">~480 kcal</span><span style="font-size:11px;color:var(--muted);padding:3px 5px">Casein → overnight recovery</span></div>
+    </div>
+
+    <div class="totals-box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em">WORKDAY TOTALS</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--lime)">~1850 kcal</span>
+      </div>
+      <div class="macro-row" style="margin-top:8px"><span class="mchip">Protein: ~200g</span><span class="mchip">Carbs: ~140g</span><span class="mchip">Fat: ~45g</span></div>
+      <div class="totals-grid">
+        <div class="total-item"><span class="food">🍗 Chicken</span><span class="grams">350 g</span></div>
+        <div class="total-item"><span class="food">🍚 Basmati rice</span><span class="grams">300 g</span></div>
+        <div class="total-item"><span class="food">🫓 Baladi bread</span><span class="grams">70 g</span></div>
+        <div class="total-item"><span class="food">🧀 Cottage cheese</span><span class="grams">200 g</span></div>
+        <div class="total-item"><span class="food">🥚 Eggs</span><span class="grams">3 eggs</span></div>
+        <div class="total-item"><span class="food">🥛 Casein</span><span class="grams">30 g</span></div>
+        <div class="total-item"><span class="food">🥦 Vegetables</span><span class="grams">350 g</span></div>
+        <div class="total-item"><span class="food">🫒 Olive oil</span><span class="grams">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKEND -->
+  <div id="meals-wknd" style="display:none">
+    <div class="meal-block">
+      <div class="meal-header">
+        <div class="meal-emoji">🍳</div>
+        <div><div class="meal-title">BREAKFAST</div><div class="meal-time">⏰ 8:00 AM · pre-workout</div></div>
+        <div class="meal-badge"><div class="meal-kcal">~620</div><div class="meal-prot">~50g protein</div></div>
+      </div>
+      <div class="food-rows">
+        <div class="food-row"><span class="food-name">🧀 Cottage cheese</span><span class="food-g">150 g</span></div>
+        <div class="food-row"><span class="food-name">🥚 Boiled eggs</span><span class="food-g">3 eggs</span></div>
+        <div class="food-row"><span class="food-name">🫓 Baladi bread</span><span class="food-g">40 g</span></div>
+        <div class="food-row"><span class="food-name">🥒 Tomato &amp; cucumber</span><span class="food-g">100 g</span></div>
+      </div>
+      <div class="macro-row"><span class="mchip">P: ~50g</span><span class="mchip">~620 kcal</span><span style="font-size:11px;color:var(--muted);padding:3px 5px">Fuels workout energy</span></div>
+    </div>
+
+    <div class="meal-block" style="border-color:rgba(232,245,90,.25)">
+      <div class="meal-header">
+        <div class="meal-emoji">⚡</div>
+        <div><div class="meal-title">LUNCH</div><div class="meal-time">⏰ 1:00 PM · <span style="color:var(--lime)">post-workout</span></div></div>
+        <div class="meal-badge"><div class="meal-kcal">~800</div><div class="meal-prot">~90g protein</div></div>
+      </div>
+      <div class="food-rows">
+        <div class="food-row"><span class="food-name">🍗 Chicken breast (grilled)</span><span class="food-g">250 g</span></div>
+        <div class="food-row"><span class="food-name">🍚 Basmati rice (cooked)</span><span class="food-g">200 g</span></div>
+        <div class="food-row"><span class="food-name">🥦 Mixed vegetables</span><span class="food-g">150 g</span></div>
+        <div class="food-row"><span class="food-name">🫒 Olive oil</span><span class="food-g">10 g</span></div>
+      </div>
+      <div class="macro-row"><span class="mchip">P: ~90g</span><span class="mchip">~800 kcal</span><span style="font-size:11px;color:var(--lime);padding:3px 5px">↑ protein + carbs for recovery</span></div>
+    </div>
+
+    <div class="meal-block">
+      <div class="meal-header">
+        <div class="meal-emoji">🌙</div>
+        <div><div class="meal-title">DINNER</div><div class="meal-time">⏰ 9:00 PM</div></div>
+        <div class="meal-badge"><div class="meal-kcal">~480</div><div class="meal-prot">~80g protein</div></div>
+      </div>
+      <div class="food-rows">
+        <div class="food-row"><span class="food-name">🍗 Chicken breast</span><span class="food-g">150 g</span></div>
+        <div class="food-row"><span class="food-name">🍚 Basmati rice (cooked)</span><span class="food-g">100 g</span></div>
+        <div class="food-row"><span class="food-name">🫓 Baladi bread</span><span class="food-g">30 g</span></div>
+        <div class="food-row"><span class="food-name">🥦 Steamed vegetables</span><span class="food-g">100 g</span></div>
+        <div class="food-row"><span class="food-name">🥛 Casein protein powder</span><span class="food-g">30 g</span></div>
+      </div>
+      <div class="macro-row"><span class="mchip">P: ~80g</span><span class="mchip">~480 kcal</span><span style="font-size:11px;color:var(--muted);padding:3px 5px">Light but protein-rich</span></div>
+    </div>
+
+    <div class="totals-box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em">WEEKEND TOTALS</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--lime)">~1900 kcal</span>
+      </div>
+      <div class="macro-row" style="margin-top:8px"><span class="mchip">Protein: ~220g</span><span class="mchip">Carbs: ~180g</span><span class="mchip">Fat: ~50g</span></div>
+      <div class="totals-grid">
+        <div class="total-item"><span class="food">🍗 Chicken</span><span class="grams">400 g</span></div>
+        <div class="total-item"><span class="food">🍚 Basmati rice</span><span class="grams">300 g</span></div>
+        <div class="total-item"><span class="food">🫓 Baladi bread</span><span class="grams">70 g</span></div>
+        <div class="total-item"><span class="food">🧀 Cottage cheese</span><span class="grams">150 g</span></div>
+        <div class="total-item"><span class="food">🥚 Eggs</span><span class="grams">3 eggs</span></div>
+        <div class="total-item"><span class="food">🥛 Casein</span><span class="grams">30 g</span></div>
+        <div class="total-item"><span class="food">🥦 Vegetables</span><span class="grams">350 g</span></div>
+        <div class="total-item"><span class="food">🫒 Olive oil</span><span class="grams">10 g</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip"><span>🛒</span><span><strong>Weekly shopping list:</strong> chicken breast, basmati rice, baladi bread, cottage cheese, eggs, casein protein powder, fresh veggies (tomato, cucumber, broccoli, mixed).</span></div>
+</div>
+
+<!-- EXERCISES -->
+<div id="tab-exercises" class="sec">
+  <div class="sec-h">Exercise Library</div>
+  <div class="sec-sub">Tap ▶ Demo to watch form on YouTube. Gym: Saturday &amp; Sunday only.</div>
+  <div class="toggle-wrap">
+    <div class="toggle-btn active" onclick="setExDay('sat')" id="exsat">🦵 Saturday — Legs &amp; Core</div>
+    <div class="toggle-btn" onclick="setExDay('sun')" id="exsun">💪 Sunday — Upper Body</div>
+  </div>
+
+  <div id="ex-sat">
+    <div class="ex-item"><div class="ex-ico">🏋️</div><div class="ex-info"><div class="ex-name">Barbell Squat</div><div class="ex-meta">3 sets × 8–12 reps · 60–90s rest</div><div class="ex-tags"><span class="tag lime">Compound</span><span class="tag blue">Quads</span><span class="tag orange">Glutes</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=barbell+back+squat+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">⚡</div><div class="ex-info"><div class="ex-name">Romanian Deadlift</div><div class="ex-meta">3 sets × 8–12 reps · 60–90s rest</div><div class="ex-tags"><span class="tag lime">Compound</span><span class="tag blue">Hamstrings</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=Romanian+deadlift+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">🦿</div><div class="ex-info"><div class="ex-name">Leg Press Machine</div><div class="ex-meta">3 sets × 10–12 reps · 60s rest</div><div class="ex-tags"><span class="tag blue">Quads</span><span class="tag orange">Glutes</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=leg+press+machine+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">🔥</div><div class="ex-info"><div class="ex-name">Hip Thrust</div><div class="ex-meta">3 sets × 12–15 reps · 60s rest</div><div class="ex-tags"><span class="tag orange">Glutes</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=barbell+hip+thrust+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">🧘</div><div class="ex-info"><div class="ex-name">Plank</div><div class="ex-meta">3 sets × 30–60 seconds · 30s rest</div><div class="ex-tags"><span class="tag lime">Core</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=plank+proper+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">🌀</div><div class="ex-info"><div class="ex-name">Hanging Leg Raise</div><div class="ex-meta">3 sets × 10–15 reps · 30s rest</div><div class="ex-tags"><span class="tag lime">Core</span><span class="tag red">Lower Abs</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=hanging+leg+raise+abs+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item" style="border-color:rgba(255,85,85,.2)"><div class="ex-ico">🚴</div><div class="ex-info"><div class="ex-name">Stationary Bike</div><div class="ex-meta">20–30 min · moderate resistance</div><div class="ex-tags"><span class="tag red">Cardio</span><span class="tag orange">Fat Burn</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=stationary+bike+fat+burn+workout+beginner" target="_blank">▶ Demo</a></div>
+  </div>
+
+  <div id="ex-sun" style="display:none">
+    <div class="ex-item"><div class="ex-ico">🏋️</div><div class="ex-info"><div class="ex-name">Barbell Bench Press</div><div class="ex-meta">3 sets × 8–12 reps · 60–90s rest</div><div class="ex-tags"><span class="tag lime">Compound</span><span class="tag blue">Chest</span><span class="tag orange">Triceps</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=barbell+bench+press+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">🔙</div><div class="ex-info"><div class="ex-name">Barbell Row</div><div class="ex-meta">3 sets × 8–12 reps · 60–90s rest</div><div class="ex-tags"><span class="tag lime">Compound</span><span class="tag blue">Back</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=barbell+bent+over+row+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">🎯</div><div class="ex-info"><div class="ex-name">Overhead Press</div><div class="ex-meta">3 sets × 8–12 reps · 60–90s rest</div><div class="ex-tags"><span class="tag lime">Compound</span><span class="tag blue">Shoulders</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=overhead+press+shoulder+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">💥</div><div class="ex-info"><div class="ex-name">Lat Pulldown</div><div class="ex-meta">3 sets × 10–12 reps · 60s rest</div><div class="ex-tags"><span class="tag blue">Lats</span><span class="tag orange">Biceps</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=lat+pulldown+wide+grip+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">💪</div><div class="ex-info"><div class="ex-name">Dumbbell Bicep Curl</div><div class="ex-meta">3 sets × 10–12 reps · 45s rest</div><div class="ex-tags"><span class="tag blue">Biceps</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=dumbbell+bicep+curl+proper+form" target="_blank">▶ Demo</a></div>
+    <div class="ex-item"><div class="ex-ico">🏄</div><div class="ex-info"><div class="ex-name">Tricep Cable Pushdown</div><div class="ex-meta">3 sets × 12 reps · 45s rest</div><div class="ex-tags"><span class="tag orange">Triceps</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=tricep+cable+pushdown+form+tutorial" target="_blank">▶ Demo</a></div>
+    <div class="ex-item" style="border-color:rgba(255,85,85,.2)"><div class="ex-ico">🚣</div><div class="ex-info"><div class="ex-name">Rowing Machine</div><div class="ex-meta">20–30 min · moderate pace</div><div class="ex-tags"><span class="tag red">Cardio</span><span class="tag lime">Full Body</span></div></div><a class="ex-btn" href="https://youtube.com/results?search_query=rowing+machine+proper+form+tutorial+beginner" target="_blank">▶ Demo</a></div>
+  </div>
+</div>
+
+<!-- LINKS -->
+<div id="tab-links" class="sec">
+  <div class="sec-h">Google Quick Links</div>
+  <div class="sec-sub">One tap to open the tools you need most.</div>
+  <div class="card-title">📊 Track &amp; Log</div>
+  <a class="glink lime" href="https://myfitnesspal.com" target="_blank"><span class="ico">🍽️</span><div class="info"><div class="name">MyFitnessPal</div><div class="desc">Log meals &amp; count calories daily</div></div><span class="arr">›</span></a>
+  <a class="glink blue" href="https://docs.google.com/spreadsheets/create" target="_blank"><span class="ico">📈</span><div class="info"><div class="name">Google Sheets</div><div class="desc">Create your weight tracking spreadsheet</div></div><span class="arr">›</span></a>
+  <a class="glink" href="https://calendar.google.com" target="_blank"><span class="ico">📅</span><div class="info"><div class="name">Google Calendar</div><div class="desc">Schedule Sat &amp; Sun workouts</div></div><span class="arr">›</span></a>
+  <a class="glink" href="https://photos.google.com" target="_blank"><span class="ico">📷</span><div class="info"><div class="name">Google Photos</div><div class="desc">Save monthly progress photos</div></div><span class="arr">›</span></a>
+  <div class="divider"></div>
+  <div class="card-title">▶️ YouTube Exercise Demos</div>
+  <a class="glink orange" href="https://youtube.com/results?search_query=squat+deadlift+bench+beginner+form+tutorial" target="_blank"><span class="ico">🏋️</span><div class="info"><div class="name">Big 3 Lifts Tutorial</div><div class="desc">Squat, Deadlift &amp; Bench Press form</div></div><span class="arr">›</span></a>
+  <a class="glink orange" href="https://youtube.com/results?search_query=HIIT+cardio+20+minutes+fat+loss" target="_blank"><span class="ico">🔥</span><div class="info"><div class="name">20-min HIIT Cardio</div><div class="desc">Fat burning for weekday light sessions</div></div><span class="arr">›</span></a>
+  <a class="glink orange" href="https://youtube.com/results?search_query=full+body+stretch+post+workout+recovery" target="_blank"><span class="ico">🧘</span><div class="info"><div class="name">Post-Workout Stretching</div><div class="desc">5–10 min recovery routine</div></div><span class="arr">›</span></a>
+  <div class="divider"></div>
+  <div class="card-title">🔍 Useful Tools</div>
+  <div class="g2grid">
+    <a class="g2btn" href="https://maps.google.com/maps?q=gym+near+me" target="_blank"><span class="ico">🗺️</span><div class="name">Gym Near Me</div><div class="desc">Google Maps</div></a>
+    <a class="g2btn" href="https://www.google.com/search?q=BMI+calculator" target="_blank"><span class="ico">🔢</span><div class="name">BMI Calc</div><div class="desc">Google Search</div></a>
+    <a class="g2btn" href="https://play.google.com/store/apps/details?id=com.google.android.apps.fitness" target="_blank"><span class="ico">🏃</span><div class="name">Google Fit</div><div class="desc">Step counter</div></a>
+    <a class="g2btn" href="https://www.google.com/search?q=high+protein+chicken+breast+recipes+low+calorie" target="_blank"><span class="ico">🍳</span><div class="name">Chicken Recipes</div><div class="desc">Meal ideas</div></a>
+    <a class="g2btn" href="https://drive.google.com" target="_blank"><span class="ico">☁️</span><div class="name">Google Drive</div><div class="desc">Save your plan</div></a>
+    <a class="g2btn" href="https://www.google.com/search?q=creatine+monohydrate+benefits+how+to+take" target="_blank"><span class="ico">⚡</span><div class="name">Creatine Guide</div><div class="desc">Supplement info</div></a>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div id="tab-schedule" class="sec">
+  <div class="sec-h">Weekly Schedule</div>
+  <div class="sec-sub">Work shift: 2 PM – 11 PM (Mon–Thu). Gym days: Sat &amp; Sun.</div>
+  <div class="day-card">
+    <div class="day-hdr"><div class="day-name">Monday – Thursday</div><div class="day-badge db-work">Work Days</div></div>
+    <div class="sched-items">
+      <div class="sched-item"><div class="sdot" style="background:var(--blue)"></div>8 AM — Breakfast (~620 kcal)</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--lime)"></div>1 PM — Lunch before shift (~750 kcal)</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--muted)"></div>2–11 PM — Work shift</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--orange)"></div>9 PM — Dinner during shift (~480 kcal)</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--muted)"></div>Optional: 20-min brisk walk before shift</div>
+    </div>
+  </div>
+  <div class="day-card">
+    <div class="day-hdr"><div class="day-name">Friday</div><div class="day-badge db-cardio">Rest / Light Cardio</div></div>
+    <div class="sched-items">
+      <div class="sched-item"><div class="sdot" style="background:var(--orange)"></div>Optional: 30-min walk or light cardio</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--lime)"></div>Meal prep: cook chicken, rice for weekend</div>
+    </div>
+  </div>
+  <div class="day-card" style="border-color:rgba(232,245,90,.2)">
+    <div class="day-hdr"><div class="day-name">Saturday 💪</div><div class="day-badge db-gym">Gym — Legs &amp; Core</div></div>
+    <div class="sched-items">
+      <div class="sched-item"><div class="sdot" style="background:var(--blue)"></div>8 AM — Breakfast (pre-workout)</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--lime)"></div>~10 AM — Squat · RDL · Leg Press · Hip Thrust</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--lime)"></div>After weights — Plank · Hanging Leg Raise</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--red)"></div>End — 20–30 min bike cardio</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--orange)"></div>1 PM — Post-workout lunch (~800 kcal · ↑ carbs)</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--muted)"></div>9 PM — Dinner + Casein (~480 kcal)</div>
+    </div>
+  </div>
+  <div class="day-card" style="border-color:rgba(232,245,90,.2)">
+    <div class="day-hdr"><div class="day-name">Sunday 💪</div><div class="day-badge db-gym">Gym — Upper Body</div></div>
+    <div class="sched-items">
+      <div class="sched-item"><div class="sdot" style="background:var(--blue)"></div>8 AM — Breakfast (pre-workout)</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--lime)"></div>~10 AM — Bench · Row · OHP · Lat Pulldown</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--lime)"></div>After weights — Bicep Curl · Tricep Pushdown</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--lime)"></div>End — 5–10 min stretching</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--red)"></div>After stretch — 20–30 min rowing cardio</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--orange)"></div>1 PM — Post-workout lunch (~800 kcal · ↑ carbs)</div>
+      <div class="sched-item"><div class="sdot" style="background:var(--muted)"></div>9 PM — Dinner + Casein (~480 kcal)</div>
+    </div>
+  </div>
+</div>
+
+<!-- TRACK -->
+<div id="tab-track" class="sec">
+  <div class="sec-h">Progress Tracker</div>
+  <div class="sec-sub">Log weight every Monday morning. Measure waist every 2 weeks.</div>
+  <div class="card">
+    <div class="card-title">⚖️ Log Weight</div>
+    <div class="track-input-row">
+      <input type="number" id="wi" step="0.1" min="50" max="200" placeholder="e.g. 109.5"/>
+      <span style="color:var(--muted);font-size:13px">kg</span>
+      <button class="log-btn" onclick="logW()">LOG</button>
+    </div>
+    <div id="wlog"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">💧 Water Today (goal: 8 glasses)</div>
+    <div class="water-grid" id="wgrid"></div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:5px"><span id="wcnt">0</span>/8 glasses done today</div>
+  </div>
+  <div class="card">
+    <div class="card-title">💊 Daily Supplements</div>
+    <div id="supps"></div>
+  </div>
+  <div class="tip"><span>📏</span><span>Measure your <strong>waist circumference</strong> every 2 weeks (at narrowest point above belly button). Waist shrinking = fat loss even if scale is slow!</span></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <button class="nbtn active" onclick="go('home')" id="bn-home"><span class="ni">🏠</span>Home</button>
+  <button class="nbtn" onclick="go('meals')" id="bn-meals"><span class="ni">🍽️</span>Meals</button>
+  <button class="nbtn" onclick="go('exercises')" id="bn-exercises"><span class="ni">🏋️</span>Workout</button>
+  <button class="nbtn" onclick="go('links')" id="bn-links"><span class="ni">🔗</span>Links</button>
+  <button class="nbtn" onclick="go('track')" id="bn-track"><span class="ni">📊</span>Track</button>
+</div>
+
+<script>
+const TABS=['home','meals','exercises','links','schedule','track'];
+function go(n){
+  TABS.forEach(t=>{document.getElementById('tab-'+t)?.classList.remove('active');document.getElementById('bn-'+t)?.classList.remove('active');});
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+n)?.classList.add('active');
+  document.getElementById('bn-'+n)?.classList.add('active');
+  document.querySelectorAll('.tabs .tab').forEach(t=>{if(t.getAttribute('onclick')?.includes("'"+n+"'"))t.classList.add('active');});
+  window.scrollTo(0,0);
+}
+function setMealDay(d){
+  document.getElementById('meals-work').style.display=d==='work'?'block':'none';
+  document.getElementById('meals-wknd').style.display=d==='wknd'?'block':'none';
+  document.getElementById('mtw').classList.toggle('active',d==='work');
+  document.getElementById('mtwk').classList.toggle('active',d==='wknd');
+}
+function setExDay(d){
+  document.getElementById('ex-sat').style.display=d==='sat'?'block':'none';
+  document.getElementById('ex-sun').style.display=d==='sun'?'block':'none';
+  document.getElementById('exsat').classList.toggle('active',d==='sat');
+  document.getElementById('exsun').classList.toggle('active',d==='sun');
+}
+let wlog=JSON.parse(localStorage.getItem('fp_wlog')||'[]');
+function logW(){
+  const v=parseFloat(document.getElementById('wi').value);
+  if(!v||v<50||v>200)return;
+  wlog.unshift({kg:v,date:new Date().toLocaleDateString('en-GB')});
+  if(wlog.length>25)wlog=wlog.slice(0,25);
+  localStorage.setItem('fp_wlog',JSON.stringify(wlog));
+  document.getElementById('wi').value='';
+  renderWlog();updateProg(v);
+}
+function renderWlog(){
+  const el=document.getElementById('wlog');
+  if(!wlog.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px">No entries yet — log your first weigh-in!</div>';return;}
+  el.innerHTML=wlog.map((e,i)=>{
+    const diff=i<wlog.length-1?(e.kg-wlog[i+1].kg).toFixed(1):null;
+    const dc=diff!==null?(parseFloat(diff)<=0?'var(--lime)':'var(--red)'):null;
+    return`<div class="wlog-item"><span class="wlog-date">${e.date}</span><div style="display:flex;align-items:center;gap:10px">${diff!==null?`<span style="font-size:11px;font-weight:600;color:${dc}">${parseFloat(diff)>0?'+':''}${diff} kg</span>`:''}<span class="wlog-kg">${e.kg} kg</span></div></div>`;
+  }).join('');
+}
+function updateProg(cur){
+  const lost=110-cur,pct=Math.max(0,Math.min(100,(lost/25)*100));
+  document.getElementById('pbar').style.width=pct.toFixed(1)+'%';
+  document.getElementById('pct-lbl').textContent=Math.max(0,lost).toFixed(1)+' kg lost';
+  document.getElementById('disp-wt').textContent=cur.toFixed(1);
+}
+let wc=parseInt(localStorage.getItem('fp_w_'+new Date().toDateString())||'0');
+function renderWater(){
+  const g=document.getElementById('wgrid');g.innerHTML='';
+  for(let i=0;i<8;i++){const c=document.createElement('div');c.className='wcup'+(i<wc?' on':'');c.textContent=i<wc?'💧':'🫙';c.onclick=()=>{wc=i<wc?i:i+1;localStorage.setItem('fp_w_'+new Date().toDateString(),wc);renderWater();};g.appendChild(c);}
+  document.getElementById('wcnt').textContent=wc;
+}
+const suppList=[{ico:'⚡',n:'Creatine Monohydrate',d:'5g — with any meal or after workout'},{ico:'💤',n:'Casein Protein (before bed)',d:'30g — already included in dinner'},{ico:'🐟',n:'Omega-3',d:'1–2g with any meal'},{ico:'💧',n:'Water — 3 to 4 Liters',d:'Track above with cups'}];
+let suppDone=JSON.parse(localStorage.getItem('fp_s_'+new Date().toDateString())||'{}');
+function renderSupps(){document.getElementById('supps').innerHTML=suppList.map((s,i)=>`<div class="supp-item" style="border-color:${suppDone[i]?'rgba(232,245,90,.25)':'var(--border)'}" onclick="toggleSupp(${i})"><span style="font-size:22px">${s.ico}</span><div style="flex:1"><div style="font-size:13px;font-weight:500;${suppDone[i]?'text-decoration:line-through;color:var(--muted)':''}">${s.n}</div><div style="font-size:10px;color:var(--muted)">${s.d}</div></div><span style="font-size:20px">${suppDone[i]?'✅':'⬜'}</span></div>`).join('');}
+function toggleSupp(i){suppDone[i]=!suppDone[i];localStorage.setItem('fp_s_'+new Date().toDateString(),JSON.stringify(suppDone));renderSupps();}
+renderWlog();renderWater();renderSupps();
+if(wlog.length)updateProg(wlog[0].kg);
+</script>
+</body>
+</html>
